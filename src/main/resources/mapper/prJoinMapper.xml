@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 회원정보 처리 SQL -->
+<mapper namespace="com.sesoc.projectTwo.dao.PrJoinMapper">
+
+	<!-- 회원 정보 저장 -->
+
+	<insert id="prJoin" parameterType="Member">
+		insert into prjoinmember (
+			prnum
+			, prid
+			, prpw
+			, prnickname
+			, prmail
+			, pryear
+			, prmonth
+			, prgen
+			) 
+		values (
+			prnum_seq.nextval
+			, #{prid}
+			, #{prpw}
+			, #{prnn}
+			, #{prem}
+			, #{pryear}
+			, #{prmonth}
+			, #{prgen}
+			) 
+	</insert>
+
+	<select id="getMember" parameterType="string" resultType="Member">
+		select * from prjoinmember 
+		where prid = #{id}
+	</select>
+	
+	<select id="prIdcheck" parameterType="string" resultType="Member">
+		select prid from prjoinmember 
+		where prid = #{prid}
+	</select>
+	
+	<insert id="prChoose" parameterType="Group">
+		insert into prgroup (
+			prid	
+			,	gr0	
+			,	gr1		
+   			,	gr2   	
+			,	gr3	    
+   			,	gr4		
+   			,	gr5		
+			,	gr6
+			,	gr7	
+			,	gr8	
+			,	gr9	
+			,	gr10
+			,	gr11	    
+   			,	prgen    
+			) 
+		values (
+			#{prid}
+			,	#{gr0}
+			,	#{gr1}
+			,	#{gr2}
+			,	#{gr3}
+			, 	#{gr4}
+			,	#{gr5}
+			,	#{gr6}
+			,	#{gr7}
+			,	#{gr8}
+			,	#{gr9}
+			,	#{gr10}
+			,	#{gr11}
+			,	#{prgen}
+			) 
+	</insert>
+	
+	<select id="getChoose" parameterType="string" resultType="Group">
+		select * from prgroup 
+		where prid = #{prid}
+	</select>
+		
+	<select id="prSearch" parameterType="Group" resultType="Group">
+		select * from
+		(
+		select
+		rank()over(order by gr0+gr1+gr2+gr3+gr4+gr5+gr6+gr7+gr8+gr9+gr10+gr11 desc) as rk,
+		prid, gr0, gr1, gr2, gr3, gr4, gr5, gr6, gr7, gr8, gr9, gr10, gr11, gr0+gr1+gr2+gr3+gr4+gr5+gr6+gr7+gr8+gr9+gr10+gr11 as cnt
+		from
+		(
+		select
+		prid,
+		decode(gr0,#{gr0}, 1, 0) as gr0
+		, decode(gr1,#{gr1}, 1, 0) as gr1
+		, decode(gr2,#{gr2}, 1, 0) as gr2
+		, decode(gr3,#{gr3}, 1, 0) as gr3
+		, decode(gr4,#{gr4}, 1, 0) as gr4
+		, decode(gr5,#{gr5}, 1, 0) as gr5
+		, decode(gr6,#{gr6}, 1, 0) as gr6
+		, decode(gr7,#{gr7}, 1, 0) as gr7
+		, decode(gr8,#{gr8}, 1, 0) as gr8
+		, decode(gr9,#{gr9}, 1, 0) as gr9
+		, decode(gr10,#{gr10}, 1, 0) as gr10
+		, decode(gr11,#{gr11}, 1, 0) as gr11
+		from  prgroup
+	   	where prgen != #{prgen}
+	   	and prid != #{prid}
+		)
+		)
+		where 
+		rk = 1
+	</select>
+	
+	<update id="prchooseC" parameterType="Group">
+		update prgroup
+		set
+		gr0 = #{gr0}
+		, gr1 = #{gr1}
+		, gr2 = #{gr2}
+		, gr3 = #{gr3}
+		, gr4 = #{gr4}
+		, gr5 = #{gr5}
+		, gr6 = #{gr6}
+		, gr7 = #{gr7}
+		, gr8 = #{gr8}
+		, gr9 = #{gr9}
+		, gr10 = #{gr10}
+		, gr11 = #{gr11}
+		where
+		prid = #{prid}
+	</update>
+	
+	<insert id="prSendm" parameterType="Messege">
+		insert into prmessege (
+			mnum
+			, mid
+			, mcontents   
+			) 
+		values (
+			prmessege_seq.nextval
+			, #{mid}
+			, #{mcontents}
+			
+			) 
+	</insert>
+	
+	<select id="getMessege" resultType="Messege" parameterType="string">
+		select mnum, mid, mcontents, to_char(minputdate , 'mm/dd') as minputdate 
+		from prmessege
+		order by mnum desc
+	</select>
+	
+	<delete id="prDeletem" parameterType="Messege">
+		delete from prmessege 
+		where mid = #{prid}
+	</delete>
+
+</mapper>
